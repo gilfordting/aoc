@@ -1,3 +1,6 @@
+# Day       Time  Rank  Score       Time   Rank  Score
+#   5   00:07:02   666      0   00:23:11   2017      0
+
 import re
 from collections import Counter
 from graphlib import TopologicalSorter

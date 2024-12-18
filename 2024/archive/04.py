@@ -1,3 +1,6 @@
+# Day       Time  Rank  Score       Time   Rank  Score
+#   4   00:30:03  6191      0   00:34:53   4185      0
+
 import re
 from collections import Counter
 from itertools import pairwise

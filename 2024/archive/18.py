@@ -1,3 +1,6 @@
+# Day       Time  Rank  Score       Time   Rank  Score
+#  18   01:24:06  6110      0   01:29:46   5571      0
+
 import heapq
 import math
 import operator

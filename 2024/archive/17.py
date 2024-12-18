@@ -1,3 +1,6 @@
+# Day       Time  Rank  Score       Time   Rank  Score
+#  17   00:25:21  1574      0   01:38:28    935      0
+
 import heapq
 import math
 import multiprocessing

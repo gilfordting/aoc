@@ -1,3 +1,5 @@
+# Day       Time  Rank  Score       Time   Rank  Score
+#   1   00:12:01  4863      0   00:14:13   3986      0
 from collections import Counter
 
 if __name__ == "__main__":

@@ -1,3 +1,6 @@
+# Day       Time  Rank  Score       Time   Rank  Score
+#  10   00:10:46  1205      0   00:11:45    787      0
+
 import operator
 import re
 from collections import Counter, defaultdict

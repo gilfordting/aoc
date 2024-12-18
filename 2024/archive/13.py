@@ -1,3 +1,6 @@
+# Day       Time  Rank  Score       Time   Rank  Score
+#  13   00:13:03   988      0   00:56:10   2574      0
+
 import operator
 import re
 import sys
