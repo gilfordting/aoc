@@ -1,0 +1,13 @@
+Register A: 56256477
+Register B: 0
+Register C: 0
+
+Program:
+2,4, bst 4: b <= a % 8  # last 3 bits
+1,1, bxl 1: b <= b ^ 1
+7,5, cdv 5: c <= a >> b
+1,5, bxl 5: b <= b ^ 5
+0,3, adv 3: a <= a >> 3
+4,3, bxc 3: b <= b ^ c
+5,5, out 5: output b
+3,0 jnz 0: jump to beginning if a = 0
