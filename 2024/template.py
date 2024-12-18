@@ -2,6 +2,7 @@ import heapq
 import math
 import operator
 import re
+from bisect import bisect_left
 from collections import Counter, defaultdict
 from copy import deepcopy
 from dataclasses import dataclass
@@ -18,10 +19,9 @@ from itertools import (
 )
 from math import prod
 
+import networkx as nx
 import numpy as np
 from tqdm import tqdm
-
-deltas = {(-1, 0), (0, -1), (1, 0), (0, 1)}
 
 
 class PriorityQueue:
@@ -39,45 +39,44 @@ class PriorityQueue:
         return len(self.q)
 
 
+deltas = {(-1, 0), (0, -1), (1, 0), (0, 1)}
+
+
 class Direction(Enum):
-    UP = 0
-    DOWN = 1
-    LEFT = 2
-    RIGHT = 3
+    UP = (-1, 0)
+    RIGHT = (0, 1)
+    DOWN = (1, 0)
+    LEFT = (0, -1)
 
+    # Clockwise rotation
+    @property
+    def next(self):
+        return {
+            Direction.UP: Direction.RIGHT,
+            Direction.RIGHT: Direction.DOWN,
+            Direction.DOWN: Direction.LEFT,
+            Direction.LEFT: Direction.UP,
+        }[self]
 
-all_directions = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]
+    # Counterclockwise rotation
+    @property
+    def prev(self):
+        return {
+            Direction.UP: Direction.LEFT,
+            Direction.LEFT: Direction.DOWN,
+            Direction.DOWN: Direction.RIGHT,
+            Direction.RIGHT: Direction.UP,
+        }[self]
 
-
-# Direction-based
-chr_to_dir = {
-    "^": Direction.UP,
-    "v": Direction.DOWN,
-    "<": Direction.LEFT,
-    ">": Direction.RIGHT,
-}
-
-dir_deltas = {
-    Direction.UP: (-1, 0),
-    Direction.DOWN: (1, 0),
-    Direction.LEFT: (0, -1),
-    Direction.RIGHT: (0, 1),
-}
-
-
-next_dir_cw = {
-    Direction.UP: Direction.RIGHT,
-    Direction.RIGHT: Direction.DOWN,
-    Direction.DOWN: Direction.LEFT,
-    Direction.LEFT: Direction.UP,
-}
-
-next_dir_ccw = {
-    Direction.UP: Direction.LEFT,
-    Direction.LEFT: Direction.DOWN,
-    Direction.DOWN: Direction.RIGHT,
-    Direction.RIGHT: Direction.UP,
-}
+    # Called when the initialization value is not a tuple. This way, we can do Direction('^')
+    @classmethod
+    def _missing_(cls, value):
+        return {
+            "^": cls.UP,
+            "v": cls.DOWN,
+            "<": cls.LEFT,
+            ">": cls.RIGHT,
+        }[value]
 
 
 def process_grid_input(text):
@@ -94,17 +93,12 @@ def process_grid_input(text):
             if in_bounds(next_r, next_c):
                 yield next_r, next_c
 
-    def num_borders(r, c):
-        horiz = 1 if r in (0, n_rows - 1) else 0
-        vert = 1 if c in (0, n_cols - 1) else 0
-        return horiz + vert
-
     def grid_iter():
         for r, row in enumerate(grid):
             for c, val in enumerate(row):
                 yield r, c, val
 
-    return grid, n_rows, n_cols, in_bounds, get_neighbors, num_borders, grid_iter
+    return grid, n_rows, n_cols, in_bounds, get_neighbors, grid_iter
 
 
 def bfs(start_state, get_neighbors, stop_condition):
@@ -120,6 +114,14 @@ def bfs(start_state, get_neighbors, stop_condition):
             visited.add(next_state)
 
 
+# Pattern is like 0 0 0 0 0 0 1 1 1 1 1
+# Returns the index of the first 1
+def binary_search_answer(lower_bound, upper_bound, check):
+    return (
+        bisect_left(range(lower_bound, upper_bound + 1), True, key=check) + lower_bound
+    )
+
+
 if __name__ == "__main__":
     ans = 0
     with open("XXXXXX.txt", "r") as f:
@@ -128,7 +130,7 @@ if __name__ == "__main__":
     # edges = defaultdict(set)
 
     # Grid input
-    # grid, n_rows, n_cols, in_bounds, get_neighbors, num_borders, grid_iter = (
+    # grid, n_rows, n_cols, in_bounds, get_neighbors, grid_iter = (
     #     process_grid_input(text)
     # )
 
