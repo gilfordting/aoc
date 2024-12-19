@@ -114,16 +114,25 @@ def bfs(start_state, get_neighbors, stop_condition):
             visited.add(next_state)
 
 
-# Pattern is like 0 0 0 0 0 0 1 1 1 1 1
-# Returns the index of the first 1
-def binary_search_answer(lower_bound, upper_bound, check):
+# if find first: pattern is like 0 0 0 0 0 0 1 1 1 1 1. returns the index of the first 1
+# if find last: pattern is like 1 1 1 1 1 0 0 0. returns index of the last 1
+def binary_search_answer(lower_bound, upper_bound, check, find_first=True):
+    if find_first:
+        return (
+            bisect_left(range(lower_bound, upper_bound + 1), True, key=check)
+            + lower_bound
+        )
+    # Invert so we can use the same logic as find_first. Here, we want the index of the last 0 (before the first 1)
+    not_check = lambda x: not check(x)
     return (
-        bisect_left(range(lower_bound, upper_bound + 1), True, key=check) + lower_bound
+        bisect_left(range(lower_bound, upper_bound + 1), True, key=not_check)
+        + lower_bound
+        - 1
     )
 
 
 if __name__ == "__main__":
-    ans = 0
+    ans1, ans2 = 0, 0
     with open("XXXXXX.txt", "r") as f:
         text = f.read()
     # Graph input
@@ -144,4 +153,5 @@ if __name__ == "__main__":
     # for r, c, val in grid_iter():
     #     pass
 
-    print(ans)
+    print(f"Part 1 answer: {ans1}")
+    print(f"Part 2 answer: {ans2}")
