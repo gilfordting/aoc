@@ -33,7 +33,7 @@ class PriorityQueue:
 
     def pop(self):
         score, item = heapq.heappop(self.q)
-        return score, item
+        return item, score
 
     def __len__(self):
         return len(self.q)
@@ -135,23 +135,30 @@ if __name__ == "__main__":
     ans1, ans2 = 0, 0
     with open("XXXXXX.txt", "r") as f:
         text = f.read()
-    # Graph input
-    # edges = defaultdict(set)
+    # Input type 1: grid
+    # grid, n_rows, n_cols, in_bounds, get_neighbors, grid_iter = process_grid_input(text)
+    # G = nx.grid_graph((n_rows, n_cols))
+    # start, end = None, None
+    # for r, c, val in grid_iter():
+    #     if val == "S":
+    #         start = (r, c)
+    #     elif val == "E":
+    #         end = (r, c)
+    #     elif val == "#":
+    #         G.remove_node((r, c))
 
-    # Grid input
-    # grid, n_rows, n_cols, in_bounds, get_neighbors, grid_iter = (
-    #     process_grid_input(text)
-    # )
+    # # Dictionary mapping nodes to their distances from start node
+    # dist = nx.shortest_path_length(G, start)
+    # dist.get(end, float("inf"))
 
-    # "Every block is in the same format" input
+    # Input type 2: every block is in the same format
     # pattern = r"xxxxxxx"
     # for line in text.split("\n"):
     #     match = re.search(pattern, line)
     #     xxxxxxx = match.groups()
 
-    # Processing the input
-    # for r, c, val in grid_iter():
-    #     pass
+    # Input type 3: graph
+    # edges = defaultdict(set)
 
     print(f"Part 1 answer: {ans1}")
     print(f"Part 2 answer: {ans2}")
