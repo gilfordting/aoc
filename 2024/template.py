@@ -23,23 +23,7 @@ import networkx as nx
 import numpy as np
 from tqdm import tqdm
 
-
-class PriorityQueue:
-    def __init__(self):
-        self.q = []
-
-    def push(self, item, score):
-        heapq.heappush(self.q, (score, item))
-
-    def pop(self):
-        score, item = heapq.heappop(self.q)
-        return item, score
-
-    def __len__(self):
-        return len(self.q)
-
-
-deltas = {(-1, 0), (0, -1), (1, 0), (0, 1)}
+deltas = [np.array((-1, 0)), np.array((0, -1)), np.array((1, 0)), np.array((0, 1))]
 
 
 class Direction(Enum):
@@ -68,6 +52,10 @@ class Direction(Enum):
             Direction.RIGHT: Direction.UP,
         }[self]
 
+    @property
+    def delta(self):
+        return np.array(self.value)
+
     # Called when the initialization value is not a tuple. This way, we can do Direction('^')
     @classmethod
     def _missing_(cls, value):
@@ -84,21 +72,40 @@ def process_grid_input(text):
     n_rows, n_cols = len(lines), len(lines[0])
     grid = [[c for c in line] for line in lines]
 
-    def in_bounds(r, c):
+    def in_bounds(pos):
+        r, c = pos
         return 0 <= r < n_rows and 0 <= c < n_cols
 
-    def get_neighbors(r, c):
-        for dr, dc in deltas:
-            next_r, next_c = r + dr, c + dc
-            if in_bounds(next_r, next_c):
-                yield next_r, next_c
+    def get_neighbors(pos):
+        for delta in deltas:
+            next_pos = pos + delta
+            if in_bounds(next_pos):
+                yield next_pos
 
     def grid_iter():
         for r, row in enumerate(grid):
             for c, val in enumerate(row):
-                yield r, c, val
+                yield (r, c), val
 
-    return grid, n_rows, n_cols, in_bounds, get_neighbors, grid_iter
+    def make_pos(r, c):
+        return np.array((r, c))
+
+    return grid, n_rows, n_cols, in_bounds, get_neighbors, grid_iter, make_pos
+
+
+class PriorityQueue:
+    def __init__(self):
+        self.q = []
+
+    def push(self, item, score):
+        heapq.heappush(self.q, (score, item))
+
+    def pop(self):
+        score, item = heapq.heappop(self.q)
+        return item, score
+
+    def __len__(self):
+        return len(self.q)
 
 
 def bfs(start_state, get_neighbors, stop_condition):
@@ -141,9 +148,9 @@ if __name__ == "__main__":
     # start, end = None, None
     # for r, c, val in grid_iter():
     #     if val == "S":
-    #         start = (r, c)
+    #         start = make_pos(r, c)
     #     elif val == "E":
-    #         end = (r, c)
+    #         end = make_pos(r, c)
     #     elif val == "#":
     #         G.remove_node((r, c))
 
