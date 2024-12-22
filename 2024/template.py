@@ -2,6 +2,7 @@ import heapq
 import math
 import operator
 import re
+import sys
 from bisect import bisect_left
 from collections import Counter, defaultdict
 from copy import deepcopy
@@ -13,6 +14,7 @@ from itertools import (
     accumulate,
     combinations,
     groupby,
+    islice,
     pairwise,
     permutations,
     zip_longest,
@@ -22,6 +24,26 @@ from math import prod
 import networkx as nx
 import numpy as np
 from tqdm import tqdm
+
+sys.setrecursionlimit(100_000)
+
+
+def groupwise(iterable, n=4):
+    """
+    Create an iterator of overlapping groups of size n from the input iterable.
+    Similar to pairwise() but with configurable group size.
+
+    Example:
+        groupwise([1,2,3,4,5,6]) -> (1,2,3,4), (2,3,4,5), (3,4,5,6)
+    """
+    iterator = iter(iterable)
+    window = tuple(islice(iterator, n))
+    if len(window) == n:
+        yield window
+    for item in iterator:
+        window = window[1:] + (item,)
+        yield window
+
 
 deltas = [np.array((-1, 0)), np.array((0, -1)), np.array((1, 0)), np.array((0, 1))]
 
