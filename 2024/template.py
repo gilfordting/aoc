@@ -187,6 +187,7 @@ if __name__ == "__main__":
     #     xxxxxxx = match.groups()
 
     # Input type 3: graph
+    # vertices = set()
     # edges = defaultdict(set)
 
     print(f"Part 1 answer: {ans1}")
