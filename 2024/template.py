@@ -189,6 +189,11 @@ if __name__ == "__main__":
     # Input type 3: graph
     # vertices = set()
     # edges = defaultdict(set)
+    # for line in text.split("\n"):
+    #
+
+    for line in text.split("\n"):
+        pass
 
     print(f"Part 1 answer: {ans1}")
     print(f"Part 2 answer: {ans2}")
