@@ -23,6 +23,7 @@ from math import prod
 
 import networkx as nx
 import numpy as np
+from aocd import data, submit
 from tqdm import tqdm
 
 sys.setrecursionlimit(100_000)
@@ -162,10 +163,10 @@ def binary_search_answer(lower_bound, upper_bound, check, find_first=True):
 
 if __name__ == "__main__":
     ans1, ans2 = 0, 0
-    with open("XXXXXX.txt", "r") as f:
-        text = f.read()
-    # Input type 1: grid
-    # grid, n_rows, n_cols, in_bounds, get_neighbors, grid_iter = process_grid_input(text)
+    # # Input type 1: grid
+    # grid, n_rows, n_cols, in_bounds, get_neighbors, grid_iter, make_pos = (
+    #     process_grid_input(data)
+    # )
     # G = nx.grid_graph((n_rows, n_cols))
     # start, end = None, None
     # for r, c, val in grid_iter():
@@ -180,20 +181,23 @@ if __name__ == "__main__":
     # dist = nx.shortest_path_length(G, start)
     # dist.get(end, float("inf"))
 
-    # Input type 2: every block is in the same format
+    # # Input type 2: every block is in the same format
     # pattern = r"xxxxxxx"
-    # for line in text.split("\n"):
+    # for line in data.split("\n"):
     #     match = re.search(pattern, line)
     #     xxxxxxx = match.groups()
 
-    # Input type 3: graph
+    # # Input type 3: graph
     # vertices = set()
     # edges = defaultdict(set)
-    # for line in text.split("\n"):
-    #
+    # for line in data.split("\n"):
+    #     pass
 
-    for line in text.split("\n"):
+    for line in data.split("\n"):
         pass
 
     print(f"Part 1 answer: {ans1}")
     print(f"Part 2 answer: {ans2}")
+
+    # submit(ans1, part="a")
+    # submit(ans2, part="b")
