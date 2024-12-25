@@ -132,6 +132,7 @@ if __name__ == "__main__":
             attempt, attempt_used = furthest_made(op_list)
             if attempt > base:
                 print(f"Found a good swap. Got to a higher iteration number: {attempt}")
+                print(res_i, res_j)
                 swaps.add((res_i, res_j))
                 base, base_used = attempt, attempt_used
                 break
