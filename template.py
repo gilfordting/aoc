@@ -20,40 +20,80 @@ from itertools import (
     zip_longest,
 )
 from math import prod
+from pprint import pprint
 
 import networkx as nx
 import numpy as np
 from aocd import data, submit
+from more_itertools import windowed
 from tqdm import tqdm
 
 sys.setrecursionlimit(100_000)
 
+# Helpful constants
 
-def groupwise(iterable, n=4):
-    """
-    Create an iterator of overlapping groups of size n from the input iterable.
-    Similar to pairwise() but with configurable group size.
-
-    Example:
-        groupwise([1,2,3,4,5,6]) -> (1,2,3,4), (2,3,4,5), (3,4,5,6)
-    """
-    iterator = iter(iterable)
-    window = tuple(islice(iterator, n))
-    if len(window) == n:
-        yield window
-    for item in iterator:
-        window = window[1:] + (item,)
-        yield window
+LETTERS = {x for x in "abcdefghijklmnopqrstuvwxyz"}
+VOWELS = {"a", "e", "i", "o", "u"}
+CONSONANTS = LETTERS - VOWELS
 
 
-deltas = [np.array((-1, 0)), np.array((0, -1)), np.array((1, 0)), np.array((0, 1))]
+# Input processing
+def lmap(func, *iterables):
+    return list(map(func, *iterables))
+
+
+def ints(s):
+    return lmap(int, re.findall(r"-?\d+", s))
+
+
+# List functions
+def diff(list1, list2=None):
+    it = pairwise(list1) if list2 is None else zip(list1, list2)
+    return [b - a for a, b in it]
+
+
+# Grid traversal helpers
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __add__(self, other):
+        return Point(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
+        return Point(self.x - other.x, self.y - other.y)
+
+    def __mul__(self, n):
+        return Point(self.x * n, self.y * n)
+
+    def __div__(self, n):
+        return Point(self.x / n, self.y / n)
+
+    def __neg__(self):
+        return Point(-self.x, -self.y)
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __str__(self):
+        return "({}, {})".format(self.x, self.y)
+
+    def __repr__(self):
+        return "Point({}, {})".format(self.x, self.y)
+
+
+deltas = {Point(-1, 0), Point(1, 0), Point(0, -1), Point(0, 1)}
 
 
 class Direction(Enum):
-    UP = (-1, 0)
-    RIGHT = (0, 1)
-    DOWN = (1, 0)
-    LEFT = (0, -1)
+    UP = Point(-1, 0)
+    RIGHT = Point(0, 1)
+    DOWN = Point(1, 0)
+    LEFT = Point(0, -1)
 
     # Clockwise rotation
     @property
@@ -77,7 +117,7 @@ class Direction(Enum):
 
     @property
     def delta(self):
-        return np.array(self.value)
+        return self.value
 
     # Called when the initialization value is not a tuple. This way, we can do Direction('^')
     @classmethod
@@ -110,10 +150,7 @@ def process_grid_input(text):
             for c, val in enumerate(row):
                 yield (r, c), val
 
-    def make_pos(r, c):
-        return np.array((r, c))
-
-    return grid, n_rows, n_cols, in_bounds, get_neighbors, grid_iter, make_pos
+    return grid, n_rows, n_cols, in_bounds, get_neighbors, grid_iter
 
 
 class PriorityQueue:
@@ -144,36 +181,17 @@ def bfs(start_state, get_neighbors, stop_condition):
             visited.add(next_state)
 
 
-# if find first: pattern is like 0 0 0 0 0 0 1 1 1 1 1. returns the index of the first 1
-# if find last: pattern is like 1 1 1 1 1 0 0 0. returns index of the last 1
-def binary_search_answer(lower_bound, upper_bound, check, find_first=True):
-    if find_first:
-        return (
-            bisect_left(range(lower_bound, upper_bound + 1), True, key=check)
-            + lower_bound
-        )
-    # Invert so we can use the same logic as find_first. Here, we want the index of the last 0 (before the first 1)
-    not_check = lambda x: not check(x)
-    return (
-        bisect_left(range(lower_bound, upper_bound + 1), True, key=not_check)
-        + lower_bound
-        - 1
-    )
-
-
 if __name__ == "__main__":
     ans1, ans2 = 0, 0
     # # Input type 1: grid
-    # grid, n_rows, n_cols, in_bounds, get_neighbors, grid_iter, make_pos = (
-    #     process_grid_input(data)
-    # )
+    # grid, n_rows, n_cols, in_bounds, get_neighbors, grid_iter = process_grid_input(data)
     # G = nx.grid_graph((n_rows, n_cols))
     # start, end = None, None
     # for r, c, val in grid_iter():
     #     if val == "S":
-    #         start = make_pos(r, c)
+    #         start = Point(r, c)
     #     elif val == "E":
-    #         end = make_pos(r, c)
+    #         end = Point(r, c)
     #     elif val == "#":
     #         G.remove_node((r, c))
 
@@ -194,7 +212,7 @@ if __name__ == "__main__":
     #     pass
 
     for line in data.split("\n"):
-        pass
+        l = ints(line)
 
     print(f"Part 1 answer: {ans1}")
     print(f"Part 2 answer: {ans2}")
